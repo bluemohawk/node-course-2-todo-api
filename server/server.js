@@ -26,3 +26,5 @@ app.get('/')
 app.listen(3000, () => {
   console.log('Started listening');
 });
+
+module.exports = {app};
