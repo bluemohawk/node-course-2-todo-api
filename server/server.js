@@ -12,6 +12,21 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+//Create a post user method
+app.post('/users', (req, res)=>{
+
+  var body = _.pick(req.body, ['email', 'password', 'tokens']);
+  var user = new User(body);
+
+  user.save().then(() => {
+    return user.generateAuthToken();
+  }).then((token)=>{
+    res.header('x-auth', token).send(user);
+  }).catch((e)=>{
+      res.status(400).send(e);
+    })
+});
+
 app.post('/todos', (req, res)=>{
 
   var todo = new Todo({
@@ -28,15 +43,13 @@ app.post('/todos', (req, res)=>{
 app.get('/todos', (req, res) => {
 
   Todo.find().then(
-    (todos) => {
-      res.send({todos})
-  }, (e) => {
-    resp.status(400).send(e);
+    (todos) => {res.send({todos});
+  },
+    (e)=>{resp.status(400).send(e);
   });
 
 });
 
-//GET /todos/2322
 app.get('/todos/:id', (req, res) => {
 
   var id = req.params.id;
@@ -79,7 +92,6 @@ app.delete('/todos/:id', (req, res) => {
   }).catch((e)=>{
     res.status(400).send();
   });
-
 });
 
 app.patch('/todos/:id', (req, res) =>{
