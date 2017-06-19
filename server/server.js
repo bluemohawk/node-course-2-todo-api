@@ -1,3 +1,5 @@
+require('./config/config');
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -63,7 +65,8 @@ app.post('/todos', authenticate, (req, res)=>{
   console.log({req});
   var todo = new Todo({
     _creator: req.user._id,
-    text: req.body.text
+    text: req.body.text,
+    completed: req.body.completed
   });
 
   todo.save().then(
